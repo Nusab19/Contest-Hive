@@ -1,5 +1,3 @@
-import { randomInt } from "../utils";
-
 export function secondsToReadableTime(s: number) {
   if (!s) {
     return "-1 second";
@@ -119,17 +117,6 @@ export function getEndTime(isoStartTime: string, durationSeconds: number) {
   return endDate;
 }
 
-export function getRandomISOTime() {
-  const randomDuration = randomInt(134902);
-  const startDate = new Date();
-  const endDate =
-    new Date(startDate.getTime() + randomDuration * 1000)
-      .toISOString()
-      .slice(0, -5) + "Z";
-
-  return endDate;
-}
-
 export function getEncodedDate(isoTime: string) {
   const dt = new Date(isoTime);
   const year = dt.getFullYear();
@@ -140,4 +127,24 @@ export function getEncodedDate(isoTime: string) {
   const seconds = dt.getSeconds().toString().padStart(2, "0");
   const encodedDate = `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
   return encodedDate;
+}
+
+export function getUserTimezone(): string {
+  try {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZoneName: "short",
+    });
+
+    const parts = formatter.formatToParts(new Date());
+
+    const timeZonePart = parts.find((part) => part.type === "timeZoneName");
+
+    if (timeZonePart && timeZonePart.value) {
+      return timeZonePart.value; // Return the timezone abbreviation (e.g., "BST").
+    }
+  } catch (error) {
+    console.error("Error determining timezone:", error);
+  }
+
+  return "Local Time"; // Default fallback if timezone cannot be determined.
 }

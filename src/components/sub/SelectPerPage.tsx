@@ -14,17 +14,21 @@ export default function SelectPerPage({
   setPerPage,
 }: {
   perPage: number;
-  setPerPage: Dispatch<SetStateAction<string>>
+  setPerPage: Dispatch<SetStateAction<string>>;
 }) {
   return (
     <Select
-      defaultValue={perPage.toString()}
+      value={perPage.toString()}
       onValueChange={(value) => setPerPage(value)}
     >
       <SelectTrigger className="w-[66px]" title="Show Per Page">
-        <SelectValue placeholder="5" />
+        <SelectValue />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent 
+        ref={(ref) =>
+        // temporary workaround from https://github.com/shadcn-ui/ui/issues/1220
+        ref?.addEventListener('touchend', (e) => e.preventDefault())
+      }>
         <SelectGroup>
           <SelectLabel>Select</SelectLabel>
           <SelectItem value="3">3</SelectItem>

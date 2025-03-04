@@ -1,15 +1,18 @@
-import FocusedPage from "./FocusedPage";
 import Stats from "./Stats";
 import Contact from "./Contact";
 import Footer from "./Footer";
 
-import { getAllContestData } from "@/lib/helpers/server";
+import ContestSection from "./ContestSection";
+import Hero from "./Hero";
+import NavBar from "./Navbar";
 
-const HomePage = async () => {
-  const contests = await getAllContestData();
+
+const HomePage = () => {
   return (
     <>
-      <FocusedPage contestData={contests} />
+      <NavBar />
+      <Hero />
+      <ContestSection />
       <Stats />
       <Contact />
       <Footer />

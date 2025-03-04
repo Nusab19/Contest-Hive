@@ -29,12 +29,14 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tanstack/react-table": "^8.16.0",
     "@uidotdev/usehooks": "^2.4.1",
+    "@vercel/functions": "^1.4.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
+    "ioredis": "^5.5.0",
     "lucide-react": "^0.372.0",
     "marked": "^13.0.0",
-    "mongoose": "^8.3.2",
+    "mongoose": "^8.8.3",
     "next": "14.2.4",
     "next-themes": "^0.3.0",
     "react": "^18",
@@ -44,7 +46,8 @@
     "react-markdown": "^9.0.1",
     "sharp": "^0.33.4",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "usehooks-ts": "^3.1.0"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -55,6 +58,7 @@
     "postcss": "^8",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
+    "sass": "^1.77.8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
