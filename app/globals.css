@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* tooltip */
+.toolText:hover + .tooltip {
+  opacity: 1;
+  display: inline-block;
+}
+
+/*
+----------------------------------------
+
+    Custom ScrollBar -> @Nusab19
+    Email   : nusabtaha33@gmail.com
+    Website : https://nusab19.pages.dev/
+
+----------------------------------------
+
+*/
+
+/* width */
+::-webkit-scrollbar {
+  width: 13px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #030712;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: hsl(232, 27%, 21%);
+  border-radius: 7px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(233, 27%, 27%);
+}
+
+/* For smooth scrolling behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+.arrow-animate {
+  animation-name: arrow;
+  animation-duration: 900ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.44, -0.2, 0.58, 1);
+  z-index: -1;
+}
+
+@keyframes arrow {
+  0% {
+    width: 225px;
+  }
+  50% {
+    width: 250px;
+  }
+  100% {
+    width: 225px;
+  }
+}
