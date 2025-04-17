@@ -44,7 +44,7 @@ const NavBar = () => {
         show ? "translate-y-0" : "-translate-y-full",
       )}
     >
-      <MaxWidthWrapper>
+      <MaxWidthWrapper className="relative">
         <div className="flex h-12 flex-1 items-center justify-between gap-2 px-2 md:h-14 md:gap-4">
           <Link
             prefetch={false}
