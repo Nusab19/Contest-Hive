@@ -10,14 +10,11 @@ const OLD_WEBSITE = "https://contest-hive-old.vercel.app";
 export function NavMenu() {
   return (
     <Sheet>
-      <SheetTrigger>
+      <SheetTrigger asChild>
         <Button
           variant="outline"
           className="z-[55] h-10 w-10 bg-red-500 px-2"
           title="Open Menu"
-          onClick={() => {
-            console.log("CLicked me!!");
-          }}
         >
           <Menu className="h-full w-full" />
         </Button>
