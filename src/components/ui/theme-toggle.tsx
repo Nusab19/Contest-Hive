@@ -22,7 +22,6 @@ export default function ThemeToggle() {
   useHotkeys(
     "alt+t",
     (e) => {
-      console.log(resolvedTheme)
       e.preventDefault();
       toggleTheme();
     },
