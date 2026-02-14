@@ -31,7 +31,8 @@ const StatsSchema = new mongoose.Schema<Stats>({
 });
 
 const StatsModel =
-  mongoose.models.Stats || mongoose.model<Stats>("Stats", StatsSchema, "contest-hive");
+  (mongoose.models.Stats as mongoose.Model<Stats>) ||
+  mongoose.model<Stats>("Stats", StatsSchema, "contest-hive");
 
 async function migrate() {
   console.log("Connecting to MongoDB...");
