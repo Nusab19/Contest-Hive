@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import sendAPImessage from "@/server/sendAPImessage";
 
 /**
  * Renders a textarea for entering messages in the Markdown editor.
@@ -52,11 +53,6 @@ function MessageArea({
 }
 
 function PreviewArea({ text }: { text: string }) {
-  console.log(
-    <ReactMarkdown className="px-4 py-2 text-start text-sm text-muted-foreground">
-      Nothing to preview
-    </ReactMarkdown>,
-  );
   return (
     <div className="min-h-48 overflow-y-auto rounded-md border">
       {text ? (
@@ -92,17 +88,7 @@ const MdEditor = () => {
 
     setDisabled(true);
     try {
-      const resp = await fetch(
-        "https://contest-hive.vercel.app/api/others/send",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message: text }),
-        }
-      );
-      const x: any = await resp.json();
+      const x = await sendAPImessage(text);
 
       if (x.ok) {
         setText("");

@@ -1,13 +1,14 @@
-import STATS from "@/db/schemas/STATS";
-import MongoConnection from "@/db/index";
+
+import { db } from "@/db/drizzle";
+import { stats } from "@/db/schema";
 import { updateData } from "@/db/updateStats";
 import { fetchStats } from "@/db/cachedStats";
 import { NextRequest } from "next/server";
 import { JsonResponse } from "@/app/api/default";
+import { eq } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
   try {
-    await MongoConnection();
     const jsonData = await req.json();
     const { path } = jsonData;
     await updateData(path);
@@ -19,23 +20,28 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    await MongoConnection();
-    const stats = await STATS.findOne({ _id: 1 });
-    const data = {
+    const result = await db.select().from(stats).where(eq(stats.id, 1));
+    const data: any = {
       ok: true,
-      ...stats.toObject(),
+      ...result[0],
       href: req.nextUrl.href,
       ip: req.headers.get("x-real-ip") || "127.0.0.1",
     };
-    delete data._id;
+    
+    if (data.id) delete data.id;
+
     return JsonResponse(data);
-  } catch {
+  } catch (e) {
+    console.error(e);
     const cachedStats = await fetchStats();
-    return JsonResponse({
-      ok: false,
-      ...cachedStats,
-      href: req.nextUrl.href,
-      ip: req.headers.get("x-real-ip") || "127.0.0.1",
-    }, 200);
+    return JsonResponse(
+      {
+        ok: false,
+        ...cachedStats,
+        href: req.nextUrl.href,
+        ip: req.headers.get("x-real-ip") || "127.0.0.1",
+      },
+      200,
+    );
   }
 }
