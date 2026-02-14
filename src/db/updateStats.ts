@@ -1,39 +1,41 @@
 "use server";
-import STATS from "@/db/schemas/STATS";
-import MongoConnection from "@/db/index";
-import { fetchStats } from "./cachedStats"; // Assuming previous artifact's file
+import { db } from "@/db/drizzle";
+import { stats } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
+import { fetchStats } from "./cachedStats";
 
 export async function updateData(key: "api" | "page") {
   try {
-    await MongoConnection();
-
-    let updateObj: { [key: string]: number } = { total: 1, past24: 1 };
-    updateObj[key] = 1;
+    const updateValues: any = {
+      total: sql`${stats.total} + 1`,
+      past24: sql`${stats.past24} + 1`,
+    };
 
     if (key === "page") {
-      updateObj["past24page"] = 1;
-      updateObj["page"] = 1;
+      updateValues.page = sql`${stats.page} + 1`;
+      updateValues.past24page = sql`${stats.past24page} + 1`;
     } else if (key === "api") {
-      updateObj["past24api"] = 1;
-      updateObj["api"] = 1;
+      updateValues.api = sql`${stats.api} + 1`;
+      updateValues.past24api = sql`${stats.past24api} + 1`;
     } else {
-      console.log("Error in Mongo Update: Invalid Key Supplied");
+      console.log("Error in Update: Invalid Key Supplied");
       return await fetchStats();
     }
 
-    const updated = await STATS.findOneAndUpdate(
-      { _id: 1 },
-      { $inc: updateObj },
-    );
+    const updated = await db
+      .update(stats)
+      .set(updateValues)
+      .where(eq(stats.id, 1))
+      .returning();
 
-    if (!updated) {
-      console.log("Error in Mongo Update: Failed to Update Stats");
+    if (!updated || updated.length === 0) {
+      console.log("Error in Update: Failed to Update Stats");
       return await fetchStats();
     }
 
-    return updated;
+    return updated[0];
   } catch (error) {
-    console.error("MongoDB Connection/Update Error:", error);
+    console.error("Database Connection/Update Error:", error);
     return await fetchStats();
   }
 }
