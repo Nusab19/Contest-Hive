@@ -92,7 +92,7 @@ const ShortcutModal = () => {
       <button
         onClick={toggleModal}
         className={cn(
-          "fixed bottom-6 right-6 z-[90] flex h-10 items-center gap-2 rounded-full border border-gray-200 bg-gray-50/70 px-4 text-sm font-medium shadow-lg transition-all duration-300 hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-800/80 dark:text-white dark:hover:bg-gray-700",
+          "md:fixed hidden bottom-6 right-6 z-[90] flex h-10 items-center gap-2 rounded-full border border-gray-200 bg-gray-50/70 px-4 text-sm font-medium shadow-lg transition-all duration-300 hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-800/80 dark:text-white dark:hover:bg-gray-700",
           isAtTop
             ? "translate-y-0 opacity-100"
             : "translate-y-20 opacity-0 pointer-events-none",
