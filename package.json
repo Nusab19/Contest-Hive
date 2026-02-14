@@ -38,7 +38,6 @@
     "drizzle-orm": "^0.45.1",
     "lucide-react": "^0.372.0",
     "marked": "^13.0.0",
-    "mongoose": "^8.8.3",
     "next": "14.2.35",
     "next-themes": "^0.3.0",
     "pg": "^8.18.0",

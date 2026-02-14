@@ -3,12 +3,20 @@
 const URL = process.env.URL;
 
 
+
 export default async function sendToAuthor(message: string, ip: string) {
+  const sanitizedMessage = message
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
   const content = `
 📧 New message from ${ip}
 Message:
 
-${message}
+${sanitizedMessage}
 `.replace(/(?:\r\n|\r|\n)/g, "%0A");
 
   const url = URL + content;
