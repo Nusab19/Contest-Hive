@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { cn, isValidEmailOrEmpty } from "@/lib/utils";
 import sendAPImessage from "@/server/sendAPImessage";
+import { Separator } from "../ui/separator";
 
 enum EmailStatusCodes {
   NOT_VISITED = 0,
@@ -96,6 +97,7 @@ function MessageArea({
           onBlur={handleEmailBlur}
           value={email}
           disabled={disabled}
+          className="text-xs"
         />
         <div
           className={cn(
@@ -130,9 +132,26 @@ function MessageArea({
   );
 }
 
-function PreviewArea({ text }: { text: string }) {
+function PreviewArea({ email, text }: { email: string; text: string }) {
+  const validEmail = isValidEmailOrEmpty(email);
   return (
-    <div className="min-h-48 overflow-y-auto rounded-md border">
+    <div className="mt-[21px] min-h-56 overflow-y-auto rounded-md border">
+      <p className="px-4 py-1 text-start text-xs font-semibold">
+        Email:{" "}
+        <span className="font-mono font-normal italic tracking-wider">
+          {email || "None given, none taken."}
+        </span>
+        <br className="block md:hidden" />
+        <span
+          className={cn(
+            "text-center font-semibold tracking-wide text-blue-600 dark:text-sky-500 md:ml-3 md:text-start",
+            validEmail ? "hidden" : "block md:inline",
+          )}
+        >
+          ( That looks valid to you? )
+        </span>
+      </p>
+      <Separator />
       {text ? (
         <ReactMarkdown className="px-4 py-2 text-start text-sm">
           {text}
@@ -216,7 +235,7 @@ const MdEditor = () => {
           />
         </TabsContent>
         <TabsContent value="preview">
-          <PreviewArea text={text} />
+          <PreviewArea text={text} email={email} />
         </TabsContent>
       </Tabs>
       <span className="mt-2 flex  items-center justify-between">

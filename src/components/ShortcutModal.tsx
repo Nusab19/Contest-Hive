@@ -27,6 +27,7 @@ const ShortcutModal = () => {
       title: "Navigation",
       items: [
         { key: "f", desc: "Go to `Focused` Page" },
+        { key: "h", desc: "Go to `Home` Page" },
         { key: "Backspace", desc: "Go Back" },
         { key: "Ctrl + Backspace", desc: "Home Page" },
       ],

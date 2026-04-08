@@ -69,7 +69,7 @@ function ContestRow({
             target="_blank"
           >
             {contest.platform.toLowerCase().includes("gym") && (
-              <span className="-mx-0.5 font-mono text-xs font-bold text-red-600 dark:text-blue-400 md:text-sm">
+              <span className="-mx-0.5 font-mono text-xs font-bold text-red-600 dark:text-rose-500 md:text-sm">
                 [GYM]{" "}
               </span>
             )}
