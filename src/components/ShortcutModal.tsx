@@ -43,6 +43,14 @@ const ShortcutModal = () => {
       ],
     },
     {
+      title: "Contact Box",
+      items: [
+        { key: "alt+e", desc: "Editor Tab" },
+        { key: "alt+p", desc: "Preview Tab" },
+        { key: "ctrl+enter", desc: "Send Message" },
+      ],
+    },
+    {
       title: "System",
       items: [
         { key: "/", desc: "Open Shortcuts" },

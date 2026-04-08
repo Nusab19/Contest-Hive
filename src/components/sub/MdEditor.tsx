@@ -1,10 +1,11 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
-import { useEffect, useRef, useState } from "react";
+import { useState, useRef } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
@@ -49,21 +50,35 @@ function MessageArea({
   const [emailStatus, setEmailStatus] = useState<EmailStatusCodes>(
     EmailStatusCodes.NOT_VISITED,
   );
+  // Tracks whether the email value actually changed during the current focus session
+  const emailChangedDuringFocus = useRef(false);
 
   const handleEmailFocus = () => {
+    emailChangedDuringFocus.current = false;
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    emailChangedDuringFocus.current = true;
+    setEmail(e.target.value);
+    // Advance to FIRST_TYPING as soon as they start typing for the first time
     setEmailStatus((prev) => {
+      if (e.target.value.trim() == "") {
+        return EmailStatusCodes.NOT_VISITED
+      }
       if (prev === EmailStatusCodes.NOT_VISITED)
         return EmailStatusCodes.FIRST_TYPING;
-      if (prev === EmailStatusCodes.FIRST_MOVED)
-        return EmailStatusCodes.RETYPING;
       return prev;
     });
   };
 
   const handleEmailBlur = () => {
+    // Only advance state if the value actually changed during this focus session
+    if (!emailChangedDuringFocus.current) return;
     setEmailStatus((prev) => {
       if (prev === EmailStatusCodes.FIRST_TYPING)
         return EmailStatusCodes.FIRST_MOVED;
+      if (prev === EmailStatusCodes.FIRST_MOVED)
+        return EmailStatusCodes.RETYPING;
       if (prev === EmailStatusCodes.RETYPING)
         return EmailStatusCodes.RERETYPING;
       return prev;
@@ -92,7 +107,7 @@ function MessageArea({
           id="msg-email"
           type="email"
           placeholder="meow@gmail.com"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
           onFocus={handleEmailFocus}
           onBlur={handleEmailBlur}
           value={email}
@@ -170,6 +185,7 @@ const MdEditor = () => {
   const [text, setText] = useState("");
   const [email, setEmail] = useState("");
   const [disabled, setDisabled] = useState(false);
+  const [currentTab, setCurrentTab] = useState("editor");
 
   const handleSendMessage = async () => {
     // Immediate check to prevent double-sends from rapid key presses
@@ -217,9 +233,23 @@ const MdEditor = () => {
     }
   };
 
+  useHotkeys("alt+e", (e) => {
+    e.preventDefault();
+    setCurrentTab("editor")
+  }, { enableOnFormTags: true });
+
+  useHotkeys("alt+p", (e) => {
+    e.preventDefault();
+    setCurrentTab("preview")
+  }, { enableOnFormTags: true });
+
   return (
     <>
-      <Tabs defaultValue="editor" className="min-h-52">
+      <Tabs
+        value={currentTab}
+        onValueChange={(value) => setCurrentTab(value)}
+        className="min-h-52"
+      >
         <TabsList>
           <TabsTrigger value="editor">Editor</TabsTrigger>
           <TabsTrigger value="preview">Preview</TabsTrigger>
