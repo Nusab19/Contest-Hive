@@ -1,14 +1,25 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { cn, isValidEmailOrEmpty } from "@/lib/utils";
 import sendAPImessage from "@/server/sendAPImessage";
+
+enum EmailStatusCodes {
+  NOT_VISITED = 0,
+  FIRST_TYPING = 1,
+  FIRST_MOVED = 2,
+  RETYPING = 3,
+  RERETYPING = 4,
+}
 
 /**
  * Renders a textarea for entering messages in the Markdown editor.
@@ -20,15 +31,44 @@ import sendAPImessage from "@/server/sendAPImessage";
  */
 function MessageArea({
   text,
+  email,
   setText,
+  setEmail,
   onKeyDown,
   disabled,
 }: {
   text: string;
+  email: string;
   setText: React.Dispatch<React.SetStateAction<string>>;
+  setEmail: React.Dispatch<React.SetStateAction<string>>;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   disabled?: boolean;
 }) {
+  const validEmail: boolean = isValidEmailOrEmpty(email);
+  const [emailStatus, setEmailStatus] = useState<EmailStatusCodes>(
+    EmailStatusCodes.NOT_VISITED,
+  );
+
+  const handleEmailFocus = () => {
+    setEmailStatus((prev) => {
+      if (prev === EmailStatusCodes.NOT_VISITED)
+        return EmailStatusCodes.FIRST_TYPING;
+      if (prev === EmailStatusCodes.FIRST_MOVED)
+        return EmailStatusCodes.RETYPING;
+      return prev;
+    });
+  };
+
+  const handleEmailBlur = () => {
+    setEmailStatus((prev) => {
+      if (prev === EmailStatusCodes.FIRST_TYPING)
+        return EmailStatusCodes.FIRST_MOVED;
+      if (prev === EmailStatusCodes.RETYPING)
+        return EmailStatusCodes.RERETYPING;
+      return prev;
+    });
+  };
+
   return (
     <div className="grid min-h-48 w-full gap-2">
       {/* <Label
@@ -37,6 +77,44 @@ function MessageArea({
       >
         Markdown Supported
       </Label> */}
+      <Field>
+        <FieldLabel
+          htmlFor="msg-email"
+          className="flex items-center justify-start gap-1"
+        >
+          Email
+          <span className="text-xs text-primary/50 hover:text-blue-500 dark:hover:text-blue-400/90">
+            (Optional)
+          </span>
+        </FieldLabel>
+        <Input
+          id="msg-email"
+          type="email"
+          placeholder="meow@gmail.com"
+          onChange={(e) => setEmail(e.target.value)}
+          onFocus={handleEmailFocus}
+          onBlur={handleEmailBlur}
+          value={email}
+          disabled={disabled}
+        />
+        <div
+          className={cn(
+            "-mt-1.5 mb-1 text-xs font-semibold tracking-wider text-red-500 dark:text-rose-500",
+            emailStatus > 1 && !validEmail ? "visible" : "hidden",
+          )}
+        >
+          Your email is not valid{" "}
+          <span
+            className={cn(
+              "font-mono text-blue-600 dark:text-sky-400",
+              emailStatus == EmailStatusCodes.RERETYPING ? "visible" : "hidden",
+            )}
+          >
+            (yet)
+          </span>
+        </div>
+      </Field>
+
       <Textarea
         id="message"
         placeholder="Type your message here. (Ctrl + Enter to send)"
@@ -71,6 +149,7 @@ function PreviewArea({ text }: { text: string }) {
 const MdEditor = () => {
   const { toast } = useToast();
   const [text, setText] = useState("");
+  const [email, setEmail] = useState("");
   const [disabled, setDisabled] = useState(false);
 
   const handleSendMessage = async () => {
@@ -88,10 +167,11 @@ const MdEditor = () => {
 
     setDisabled(true);
     try {
-      const x = await sendAPImessage(text);
+      const x = await sendAPImessage(email, text);
 
       if (x.ok) {
         setText("");
+        setEmail("");
       }
 
       toast({
@@ -128,7 +208,9 @@ const MdEditor = () => {
         <TabsContent value="editor">
           <MessageArea
             text={text}
+            email={email}
             setText={setText}
+            setEmail={setEmail}
             onKeyDown={handleKeyDown}
             disabled={disabled}
           />
